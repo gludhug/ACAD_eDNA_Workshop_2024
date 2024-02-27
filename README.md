@@ -1,18 +1,12 @@
-############################
-####METAGENOMIC WORKFLOW####
-############################
+#METAGENOMIC WORKFLOW
+#FIRSTDAY
 
-
-##############
-###FIRSTDAY###
-##############
-
-##Installing
+#Installing conda
 bash Miniconda3-latest-Linux-x86_64.sh
 source ~/.bashrc
 conda config --set auto_activate_base false
 
-##Add channels
+#Add channels
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
@@ -21,7 +15,7 @@ conda config --add channels conda-forge
 conda create -n nf-core-dsl1 -c bioconda nexflow=22.10.6
 conda activate nf-core-dsl1
 
-##Find hpc info
+#Find hpc info
 sinfo -o “%P %c %m %t %l”
 P = Partition
 c = cpu
@@ -29,18 +23,20 @@ m = memory
 t = state
 l = time limit
 
-ln -s $PATH/FILE > $PATH/FILE
-(symlink : shared document without copy)
+#symlink : shared document without copy
 
-##Nextflow need singularity, loading module is needed in HPC
+ln -s $PATH/FILE > $PATH/FILE
+
+#Nextflow need singularity, loading module is needed in HPC
 spack load apptainer
 or
 module load singularity
 
-##Running Eager for QC step
+#Running Eager for QC step
 screen -R eager #new screen
 screen -r eager #resume screen
 
+#Eager Script for adapter removal
 nextflow run nf-core/eager \
 -r 2.5.0 \
 -c envadna.conf \
@@ -64,11 +60,10 @@ nextflow run nf-core/eager \
 --skip_qualimap
 
 
-###################
-#######Day2########
-###################
+#Day2
+
 https://github.com/miwipe/acad_workshop2024
-##Additional Information
+#Additional Information
 
 Filter data:
 - Adapter trimming
@@ -95,8 +90,8 @@ Taxonomyic profiling
 - Bowtie2+bam-filter/reassignment+metaDMG(ngsLCA)
 
 
-###Create Conda env
-###Make yaml1
+#Create Conda env using yaml file
+#Make yaml1
 name: acad-euks_1
 channels:
   - conda-forge
@@ -123,7 +118,7 @@ dependencies:
   - fasta-splitter
   - datamash
   - seqkit
-
+#yaml2
 name: acad-euks_2
   channels:
     - conda-forge
@@ -139,7 +134,6 @@ name: acad-euks_2
   - epa-ng
   - gappa
   - seqkit
-##make yaml
 
 conda env create -f acad-euks_1.yaml
 conda env create -f acad-euks_2.yaml
@@ -150,11 +144,11 @@ conda install -c conda-forge -c bioconda -c genomewalker bam-filter
 
 
 
-###Analyse data
-###Quality control of trimmed and merged sequences
-###When handling large data and mapping against large reference genome collections,it can be important to remove duplicates, to save cpu and run time. For this, I use vsearch https://github.com/torognes/vsearchfast tool that screens for 100% identical sequences (most likely caused by PCR duplication).You can use vsearch --help to familiarize yourself with its options.
-###vsearch -- Remove the duplicates
-#Depends on the how big is the fasta in this demo around 10 millions Read
+#Analyse data
+Quality control of trimmed and merged sequences
+When handling large data and mapping against large reference genome collections,it can be important to remove duplicates, to save cpu and run time. For this, I use vsearch https://github.com/torognes/vsearchfast tool that screens for 100% identical sequences (most likely caused by PCR duplication).You can use vsearch --help to familiarize yourself with its options.
+vsearch -- Remove the duplicates
+Depends on the how big is the fasta in this demo around 10 millions Read
 srun -n 1 --mem 1GB  vsearch --fastx_uniques ERR10493277_small-FINAL.fq.gz \
 --fastqout ./ERR10493277_small-FINAL.vs.fq --minseqlength 30 --strand both
 
