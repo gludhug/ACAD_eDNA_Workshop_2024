@@ -158,19 +158,19 @@ srun -n 1 --mem 1GB  vsearch --fastx_uniques ERR10493277_small-FINAL.fq.gz \
 ###I use sga / bbduk in which dust ranges from 1-4 where 1 is the most stringent.
 srun -n 1 --mem 5GB sga preprocess -m 30 --dust-threshold=1 ERR10493277_small-FINAL.vs.fq  -o ERR10493277_small-FINAL.vs.d1.fq
 
-# prints the readIDs of each sequence that parsed filters
+#prints the readIDs of each sequence that parsed filters
 grep 'M_A00706' ERR10493277_small-FINAL.vs.d1.fq
 
-# we can make this into a text file with all readIDs that parsed
+#Make text file with all readIDs that parsed
 for file in ERR10493277_small-FINAL.vs.d1.fq; do grep 'M_A00706' $file | cut -f2 -d@ > $file.readID.tmp ; done
 
-# we can then inverse grep these readIDs in the original fastq file, to get the readIDs of the filtered sequences
+#Make inverse grep these readIDs in origin fastq file, to get the readIDs of the filtered sequences
 grep 'M_A00706' ERR10493277_small-FINAL.vs.fq | grep -f ERR10493277_small-FINAL.vs.d1.fq.readID.tmp -v | cut -f2 -d@ > ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
 
-# how many reads did we filter out, and does it correspond to the stdout sga printed?
+#how many reads did we filter out, and does it correspond to the stdout sga printed?
 wc -l ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
 
-# we can use seqtk to grep out all sequences that where categorized as low complex, what do you see?
+#Check using seqtk to grep out all sequences that categorize as low complex
 seqtk subseq ERR10493277_small-FINAL.vs.fq ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
 
 
