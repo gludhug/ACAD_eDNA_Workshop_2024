@@ -152,21 +152,16 @@ conda install -c conda-forge -c bioconda -c genomewalker bam-filter
 
 ###Analyse data
 ###Quality control of trimmed and merged sequences
-When handling large data and mapping against large reference genome collections,
-it can be important to remove duplicates, to save cpu and run time.
-For this, I use vsearch https://github.com/torognes/vsearch
-fast tool that screens for 100% identical sequences (most likely caused by PCR duplication).
-You can use vsearch --help to familiarize yourself with its options.
-
-#vsearch -- Remove the duplicates
+###When handling large data and mapping against large reference genome collections,it can be important to remove duplicates, to save cpu and run time. For this, I use vsearch https://github.com/torognes/vsearchfast tool that screens for 100% identical sequences (most likely caused by PCR duplication).You can use vsearch --help to familiarize yourself with its options.
+###vsearch -- Remove the duplicates
 #Depends on the how big is the fasta in this demo around 10 millions Read
 srun -n 1 --mem 1GB  vsearch --fastx_uniques ERR10493277_small-FINAL.fq.gz \
 --fastqout ./ERR10493277_small-FINAL.vs.fq --minseqlength 30 --strand both
 
 
 ###Clean out low complex sequences
-Another important aspect is to clean out low complex sequences again several tools can do this,
-I use sga / bbduk in which dust ranges from 1-4 where 1 is the most stringent.
+###Another important aspect is to clean out low complex sequences again several tools can do this,
+###I use sga / bbduk in which dust ranges from 1-4 where 1 is the most stringent.
 srun -n 1 --mem 5GB sga preprocess -m 30 --dust-threshold=1 ERR10493277_small-FINAL.vs.fq  -o ERR10493277_small-FINAL.vs.d1.fq
 
 # prints the readIDs of each sequence that parsed filters
